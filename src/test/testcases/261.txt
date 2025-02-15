@@ -1,0 +1,13 @@
+type Person struct {
+            name string;
+        }
+        func (p Person) Speak() string {
+            return "Hello, " + p.name;
+        }
+        func printSpeech(speech string) {
+            println(speech);
+        }
+        func main() {
+            var p Person = Person{name: "John"};
+            printSpeech(p.Speak());
+        }

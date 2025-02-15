@@ -1,0 +1,11 @@
+func main() {
+            counter := func() func() int {
+                count := 0;
+                return func() int {
+                    count += 1;
+                    return count;
+                }
+            }()
+            println(counter());
+            println(counter());
+        }

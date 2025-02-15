@@ -1,0 +1,6 @@
+func foo() {
+            println("Hello");
+        }
+        func main() {
+            foo();
+        }

@@ -1,0 +1,5 @@
+type Person struct {
+            name string;
+            age int;
+            scores [3]int;
+        }

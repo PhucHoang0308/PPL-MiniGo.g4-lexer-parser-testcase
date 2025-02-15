@@ -1,0 +1,4 @@
+func main() {
+            defer println("Goodbye");
+            println("Hello");
+        }

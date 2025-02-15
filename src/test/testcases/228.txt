@@ -1,0 +1,3 @@
+func foo(arr [3]int) int {
+            return arr[0] + arr[1] + arr[2];
+        }

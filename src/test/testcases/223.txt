@@ -1,0 +1,13 @@
+func main() {
+            for i := 0; i < 10; i+=1 {
+            if i % 2 == 0 {
+            continue
+            break;
+            }
+            println(i)
+            }
+            if (i % 2 == 0) {
+            continue
+            }
+            println(i);
+        }

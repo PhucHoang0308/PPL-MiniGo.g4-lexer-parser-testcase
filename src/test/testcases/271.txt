@@ -1,0 +1,12 @@
+func main() {
+            switch x {
+                case 1:
+                    println("One");
+                    break;
+                case 2:
+                    println("Two");
+                    break;
+                default:
+                    println("Other");
+            }
+        }

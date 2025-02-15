@@ -1,0 +1,6 @@
+type Speaker interface {
+            Speak() string;
+        }
+        func foo(s Speaker) string {
+            return s.Speak();
+        }

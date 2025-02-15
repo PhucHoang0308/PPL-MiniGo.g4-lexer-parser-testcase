@@ -1,0 +1,8 @@
+func sum(arr [3]int) int {
+            return arr[0] + arr[1] + arr[2];
+        }
+        func main() {
+            var arr [3]int = [3]int{1, 2, 3};
+            var result int = sum(arr);
+            println(result);
+        }

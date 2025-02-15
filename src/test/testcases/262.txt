@@ -1,0 +1,10 @@
+func add(x int, y int) int {
+            return x + y;
+        }
+        func multiply(x int, y int) int {
+            return x * y;
+        }
+        func main() {
+            var result int = add(multiply(2, 3), add(4, 5));
+            println(result);
+        }
