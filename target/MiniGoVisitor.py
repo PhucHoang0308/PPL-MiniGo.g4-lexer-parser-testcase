@@ -39,6 +39,11 @@ class MiniGoVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by MiniGoParser#arraytype.
+    def visitArraytype(self, ctx:MiniGoParser.ArraytypeContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by MiniGoParser#structdecl.
     def visitStructdecl(self, ctx:MiniGoParser.StructdeclContext):
         return self.visitChildren(ctx)
@@ -51,11 +56,6 @@ class MiniGoVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by MiniGoParser#typ.
     def visitTyp(self, ctx:MiniGoParser.TypContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by MiniGoParser#arraytype.
-    def visitArraytype(self, ctx:MiniGoParser.ArraytypeContext):
         return self.visitChildren(ctx)
 
 

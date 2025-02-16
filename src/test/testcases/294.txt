@@ -1,0 +1,5 @@
+    
+        func a(){
+                var VoTien [1]int = 1
+            }
+        

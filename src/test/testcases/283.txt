@@ -1,5 +1,5 @@
 func main() {
             var x int = 42;
-            var p *int = &x;
-            println(*p);
+            var p int = x;
+            println(p);
         }

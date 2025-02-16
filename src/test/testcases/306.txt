@@ -1,0 +1,5 @@
+    
+            func a(){
+                if (1)  {return true;}
+            }
+        

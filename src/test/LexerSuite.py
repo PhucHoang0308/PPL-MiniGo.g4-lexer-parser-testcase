@@ -435,11 +435,10 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.checkLexeme("""1.2.3.4.5.6""","""1.2,.,3.4,.,5.6,<EOF>""",199))
         
     def test_super_complex(self):
-        self.assertTrue(TestLexer.checkLexeme("""
-            var x = 42;
-            var y = 3.14;
-            z := x + y;
-            result := "Test";
-            z == y;
-            if x > 10 { x = 5; }
-        ""","""var,x,=,42,;,var,y,=,3.14,;,z,:=,x,+,y,;,result,:=,"Test",;,z,==,y,;,if,x,>,10,{,x,=,5,;,},;,<EOF>""",200))
+        print("test_variable_declaration_in_loop")
+        self.assertTrue(TestLexer.checkLexeme("""func main() {
+            for i := 0; i < 10; i+=1 {
+                var x int = i * 2;
+                println(x);
+            }
+        }""","""func,main,(,),{,for,i,:=,0,;,i,<,10,;,i,+=,1,{,var,x,int,=,i,*,2,;,println,(,x,),;,},;,},<EOF>""",200))

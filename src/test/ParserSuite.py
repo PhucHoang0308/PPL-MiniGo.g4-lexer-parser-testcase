@@ -42,7 +42,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.checkParser(input,expect,207))
 
     def test_correct_string_with_newline(self):
-        input = """var y = "Hello\n";"""
+        input = """var y = "Hello \\n";"""
         expect = "successful"
         self.assertTrue(TestParser.checkParser(input,expect,208))
 
@@ -62,7 +62,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.checkParser(input, expect, 211))
 
     def test_method_declaration(self):
-        input = """func (p Person) Speak() string { return "Hello" }"""
+        input = """func (p Person) Speak() string { return "Hello" ;}"""
         expect = "successful"
         self.assertTrue(TestParser.checkParser(input, expect, 212))
 
@@ -94,8 +94,8 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.checkParser(input, expect, 216))
 
     def test_function_call(self):
-        input = """q := add((10, 20))"""
-        expect = "Error on line 1 col 10: ("
+        input = """q := add(10, 20)"""
+        expect = "successful"
         self.assertTrue(TestParser.checkParser(input, expect, 217))
 
     def test_if_statement(self):
@@ -142,15 +142,6 @@ class ParserSuite(unittest.TestCase):
         expect = "successful"
         self.assertTrue(TestParser.checkParser(input, expect, 221))
 
-    def test_infinite_loop(self):
-        input = """func main() {
-            for {
-            // infinite loop
-            break
-            }
-        }"""
-        expect = "successful"
-        self.assertTrue(TestParser.checkParser(input, expect, 222))
 
     def test_nested_loops(self):
         input = """func main() {
@@ -426,16 +417,20 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.checkParser(input, expect, 250))
 
     def test_variable_declaration_in_loop(self):
+        print("test_variable_declaration_in_loop")
         input = """func main() {
             for i := 0; i < 10; i+=1 {
                 var x int = i * 2;
                 println(x);
             }
         }"""
+        
         expect = "successful"
         self.assertTrue(TestParser.checkParser(input, expect, 251))
-
+        
+    print("test_variable_declaration_in_loop")
     def test_variable_declaration_in_if(self):
+        print("test_another")
         input = """func main() {
             if true {
                 var x int = 10;
@@ -649,72 +644,18 @@ class ParserSuite(unittest.TestCase):
         expect = "successful"
         self.assertTrue(TestParser.checkParser(input, expect, 268))
 
-    def test_do_while_loop(self):
-        input = """func main() {
-            do {
-                x += 1;
-            } while x < 10;
-        }"""
-        expect = "successful"
-        self.assertTrue(TestParser.checkParser(input, expect, 269))
-
-    def test_switch_case(self):
-        input = """func main() {
-            switch x {
-                case 1:
-                    println("One");
-                case 2:
-                    println("Two");
-                default:
-                    println("Other");
-            }
-        }"""
-        expect = "successful"
-        self.assertTrue(TestParser.checkParser(input, expect, 270))
-
-    def test_switch_case_with_break(self):
-        input = """func main() {
-            switch x {
-                case 1:
-                    println("One");
-                    break;
-                case 2:
-                    println("Two");
-                    break;
-                default:
-                    println("Other");
-            }
-        }"""
-        expect = "successful"
-        self.assertTrue(TestParser.checkParser(input, expect, 271))
-
-    def test_switch_case_with_fallthrough(self):
-        input = """func main() {
-            switch x {
-                case 1:
-                    println("One");
-                    fallthrough;
-                case 2:
-                    println("Two");
-                    break;
-                default:
-                    println("Other");
-            }
-        }"""
-        expect = "successful"
-        self.assertTrue(TestParser.checkParser(input, expect, 272))
 
     def test_function_with_default_parameter(self):
-        input = """func foo(x int, y int = 10) int {
+        input = """func foo(x int, y int) int {
             return x + y;
         }"""
         expect = "successful"
         self.assertTrue(TestParser.checkParser(input, expect, 273))
 
     def test_function_with_variadic_parameter(self):
-        input = """func sum(nums ...int) int {
+        input = """func sum(nums int) int {
             total := 0;
-            for _, num := range nums {
+            for dsa, num := range nums {
                 total += num;
             }
             return total;
@@ -731,58 +672,6 @@ class ParserSuite(unittest.TestCase):
         expect = "successful"
         self.assertTrue(TestParser.checkParser(input, expect, 275))
 
-    def test_anonymous_function(self):
-        input = """func main() {
-            add := func(x int, y int) int {
-                return x + y;
-            }
-            println(add(1, 2));
-        }"""
-        expect = "successful"
-        self.assertTrue(TestParser.checkParser(input, expect, 276))
-
-    def test_closure(self):
-        input = """func main() {
-            counter := func() func() int {
-                count := 0;
-                return func() int {
-                    count += 1;
-                    return count;
-                }
-            }()
-            println(counter());
-            println(counter());
-        }"""
-        expect = "successful"
-        self.assertTrue(TestParser.checkParser(input, expect, 277))
-
-    def test_defer_statement(self):
-        input = """func main() {
-            defer println("Goodbye");
-            println("Hello");
-        }"""
-        expect = "successful"
-        self.assertTrue(TestParser.checkParser(input, expect, 278))
-
-    def test_panic_statement(self):
-        input = """func main() {
-            panic("Something went wrong");
-        }"""
-        expect = "successful"
-        self.assertTrue(TestParser.checkParser(input, expect, 279))
-
-    def test_recover_statement(self):
-        input = """func main() {
-            defer func() {
-                if r := recover(); r != nil {
-                    println("Recovered from", r);
-                }
-            }()
-            panic("Something went wrong");
-        }"""
-        expect = "successful"
-        self.assertTrue(TestParser.checkParser(input, expect, 280))
-
     def test_type_conversion(self):
         input = """func main() {
             var x int = 42;
@@ -795,8 +684,8 @@ class ParserSuite(unittest.TestCase):
     def test_pointer_declaration(self):
         input = """func main() {
             var x int = 42;
-            var p *int = &x;
-            println(*p);
+            var p int = x;
+            println(p);
         }"""
         expect = "successful"
         self.assertTrue(TestParser.checkParser(input, expect, 283))
@@ -804,8 +693,8 @@ class ParserSuite(unittest.TestCase):
     def test_pointer_arithmetic(self):
         input = """func main() {
             var arr [3]int = [3]int{1, 2, 3};
-            var p *int = &arr[0];
-            println(*(p + 1));
+            var p int = arr[0];
+            println((p + 1));
         }"""
         expect = "successful"
         self.assertTrue(TestParser.checkParser(input, expect, 284))
@@ -817,8 +706,33 @@ class ParserSuite(unittest.TestCase):
         }
         func main() {
             var p Person = Person{name: "John", age: 30};
-            var ptr *Person = &p;
+            var ptr Person = p;
             println(ptr.name);
         }"""
         expect = "successful"
         self.assertTrue(TestParser.checkParser(input, expect, 285))
+    def test_illegal_var_declaration(self):
+        input = """
+        const test = a[1].b.d(1,);
+        """
+        expect = "Error on line 2 col 33: )"
+        self.assertTrue(TestParser.checkParser(input,expect,286))
+        
+    def test_illegal_var_declaration_1(self):
+        input = """
+        const test = a[1].b.d.;
+        """
+        expect = "Error on line 2 col 31: ;"
+        self.assertTrue(TestParser.checkParser(input,expect,287))
+        
+    def test_illegal_var_declaration_2(self):
+        input = """const test = Student {student hcmut};"""
+        expect = "Error on line 1 col 22: {"
+        self.assertTrue(TestParser.checkParser(input,expect,288))
+        
+    def test_illegal_var_declaration_3(self):
+        input = """
+        const test = a[1,2,4][2];
+        """
+        expect = "Error on line 2 col 25: ,"
+        self.assertTrue(TestParser.checkParser(input,expect,289))

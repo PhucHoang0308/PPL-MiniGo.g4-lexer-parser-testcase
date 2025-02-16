@@ -19,7 +19,6 @@ def emit(self):
         raise ErrorToken(result.text); 
     else:
         self.preType = tk
-        print("preType hiện tại:", self.preType, " text:", self.text)
         return super().emit();
 }
 
@@ -34,15 +33,17 @@ vardecl: 'var' ID typ? '=' expr nl
     | 'var' ID typ nl ;
 
 receiver: '(' ID typ ')' ;
-funcdecl: 'func' receiver? ID PAREN_OPEN paramlist? PAREN_CLOSE typ? '{' (stmt )* returnstmt? '}' nl ;
+funcdecl: 'func' receiver? ID PAREN_OPEN paramlist? PAREN_CLOSE (typ|(PAREN_OPEN paramlist PAREN_CLOSE))? '{' (stmt )* returnstmt? '}' nl ;
 
 
-arraydecl: 'var' ID ('[' INTLIT ']')+ typ nl ;
+arraydecl: 'var' ID arraytype nl ;
+
+arraytype: ('[' (INTLIT | ID) ']')+ basictype ;
+
 
 structdecl: 'type' ID 'struct' '{' fielddecl* '}' nl;
 fielddecl: (ID typ) (';'|nl);
 typ: arraytype | basictype ;
-arraytype: ('[' INTLIT ']')+ basictype ;
 basictype: TYPE | ID ;
 
 interfacedecl: 'type' ID 'interface' '{' methoddecl* '}' nl;
@@ -52,20 +53,20 @@ param: ID (',' ID)* typ ;
 
 constdecl: 'const' ID '=' expr nl ;
 
-array_access: ID ('[' INTLIT ']')+ ;
-struct_access: (ID|array_access) '.' (ID|array_access);
+array_access: (funccall|ID) ('[' INTLIT ']')+ ;
+struct_access: (ID|array_access) '.' (ID|array_access|funccall);
 
 multi_array_literal: ('[' expr ']')+ typ '{' ( '{' expr (',' expr)* '}' ) (',' '{' expr (',' expr)* '}' )+ '}' ;
 array_literal: ('[' expr ']')+ typ '{' expr (',' expr)* '}' ;
 
 struct_literal: ID '{' struct_field_list? '}' ;
 struct_field_list: struct_field (',' struct_field)* ;
-struct_field: ID ':' expr ;
+struct_field: ID COLON expr ;
 
 funccall: ID '(' arglist? ')' ;
 arglist: expr (',' expr)* ;
 
-methodcall: ID '.' funccall ;
+methodcall: ((array_access|struct_access|ID) '.')+ ID '(' arglist? ')' ;
 
 //stmt
 stmt: vardecl| assignstmt 
@@ -76,17 +77,17 @@ stmt: vardecl| assignstmt
     | returnstmt 
     | callstmt ;
 
-assignstmt: (ID|array_access | struct_access ) (OP_ASSEQ|OP_ASSIGN|OP_EQUAL) expr nl ;
+assignstmt: (ID| struct_access|array_access  ) (OP_ASSEQ|OP_ASSIGN|OP_EQUAL) expr nl ;
 
-ifstmt:('if'  expr  block (elseifstmt)* (elsestmt)? )| ('if' '(' expr ')' block (elseifstmt)* (elsestmt)?) ;
+ifstmt:(('if'  expr  block (NEWLINE? elseifstmt)* (NEWLINE? elsestmt)? )| ('if' '(' expr ')' block (NEWLINE? elseifstmt)* (NEWLINE? elsestmt)?) )nl;
 elseifstmt:('else' 'if'   expr   block) | ('else' 'if'  '(' expr ')'  block) ;
 elsestmt: 'else' block ;
 
-forstmt: 'for' expr block
-        | 'for'  forinit ';' expr ';' forupdate  block 
-        | 'for' ID  ',' ID OP_ASSEQ 'range' ID block ;
-forinit: assignstmt | vardecl ;
-forupdate: assignstmt ;
+forstmt: 'for' expr block nl
+        | 'for'  forinit ';' expr ';' forupdate  block nl
+        | 'for' ID  ',' ID OP_ASSEQ 'range' ID block nl ;
+forinit: ((ID| struct_access|array_access  ) (OP_ASSEQ|OP_ASSIGN|OP_EQUAL) expr) | vardecl ;
+forupdate: ((ID| struct_access|array_access  ) (OP_ASSEQ|OP_ASSIGN|OP_EQUAL) expr) ;
 
 breakstmt: 'break' nl ;
 
@@ -95,7 +96,7 @@ continuestmt: 'continue' nl ;
 returnstmt: 'return' expr? nl ;
 
 callstmt: ID '(' arglist? ')' nl ;
-block: '{' (stmt nl)* '}' ;
+block: '{' (stmt )* '}' ;
 // Lexer rules
 expr: expr OP_ARITH expr
     | expr OP_LOGIC expr
@@ -111,8 +112,8 @@ expr: expr OP_ARITH expr
     | multi_array_literal
     | array_literal
     | struct_literal
-    | array_access
     | struct_access
+    | array_access
     | ID;
 // Operations
 OP_COMPARE: '==' | '!=' | '<' | '<=' | '>' | '>=' ;
@@ -121,6 +122,7 @@ OP_LOGIC: '&&' | '||' | '!' ;
 OP_ARITH: '+' | '-' | '*' | '/' | '%' ;
 OP_EQUAL: '=' ;
 OP_ASSEQ: ':=' ;
+COLON: ':' ;
 
 // Separators
 PAREN_OPEN: '(' ;
@@ -131,6 +133,7 @@ BRACK_OPEN: '[' ;
 BRACK_CLOSE: ']' ;
 SEPARATOR_COMMA: ',' ;        
 SEPARATOR_SEMI: ';' ;
+OP_DOT: '.' ;
 
 TYPE: 'int' | 'float' | 'boolean' | 'string' | 'array' | 'struct' | 'interface';
 BOOLLIT: 'true' | 'false' ;
@@ -146,7 +149,6 @@ fragment DIGIT: [0-9];
 fragment DIGITS: '0' | DIGIT+;
 fragment FRAC: '.'DIGIT*;
 fragment EXP: [Ee][+-]? DIGITS;
-
 INTLIT: DECIMAL_LITERAL | BINARY_LITERAL | OCTAL_LITERAL | HEXADECIMAL_LITERAL ;
 STRLIT: '"' STRING_CHAR* '"' ;
 fragment STRING_CHAR: ~[\n\\"] | ESC_SEQ;
@@ -177,7 +179,7 @@ NEWLINE
                 MiniGoLexer.PAREN_CLOSE,
                 MiniGoLexer.BRACK_CLOSE,
                 MiniGoLexer.BRACE_CLOSE,
-            ]:
+            ] :
                 self.text = ';'
             else:
                 self.skip()

@@ -1,0 +1,5 @@
+    
+        func a(){
+                var c = 1 ;var c = 1
+            }
+        

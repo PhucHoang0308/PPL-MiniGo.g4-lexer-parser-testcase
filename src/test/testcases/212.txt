@@ -1,1 +1,1 @@
-func (p Person) Speak() string { return "Hello" }
+func (p Person) Speak() string { return "Hello" ;}

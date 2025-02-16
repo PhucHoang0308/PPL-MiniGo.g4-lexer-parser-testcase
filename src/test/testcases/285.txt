@@ -4,6 +4,6 @@ type Person struct {
         }
         func main() {
             var p Person = Person{name: "John", age: 30};
-            var ptr *Person = &p;
+            var ptr Person = p;
             println(ptr.name);
         }

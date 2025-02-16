@@ -1,8 +1,6 @@
-
-            var x = 42;
-            var y = 3.14;
-            z := x + y;
-            result := "Test";
-            z == y;
-            if x > 10 { x = 5; }
-        
+func main() {
+            for i := 0; i < 10; i+=1 {
+                var x int = i * 2;
+                println(x);
+            }
+        }
